@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Core Environment Proxy</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f9fc;
+            color: #1f2933;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.1);
+        }
+        h1 {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        a.button {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            color: #ffffff;
+            background-color: #2563eb;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+        a.button:hover,
+        a.button:focus {
+            background-color: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Core Environment Proxy (CEP)</h1>
+    <a class="button" th:href="@{/home}">Enter Home</a>
+</div>
+</body>
+</html>
