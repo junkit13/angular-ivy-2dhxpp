@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>CEP &mdash; User Groups</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1f2933;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background: #1d4ed8;
+            color: #ffffff;
+            padding: 1.5rem 2rem;
+        }
+        main {
+            flex: 1;
+            padding: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+        }
+        th, td {
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background: #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.85rem;
+        }
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: 999px;
+            background: #1d4ed8;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Core Environment Proxy &mdash; User Groups</h1>
+</header>
+<main>
+    <section th:if="${userGroups.isEmpty()}">
+        <div class="empty-state">
+            <p>No user groups are currently defined.</p>
+            <a class="button" th:href="@{/}">Back to Welcome</a>
+        </div>
+    </section>
+    <section th:if="${!userGroups.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="group : ${userGroups}">
+                <td th:text="${group.id}">1</td>
+                <td th:text="${group.name}">Example</td>
+                <td th:text="${group.description}">Example Description</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>
