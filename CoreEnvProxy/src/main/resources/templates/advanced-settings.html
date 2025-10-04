@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Advance Settings - Core Environment Proxy</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/advanced-settings.js}" defer></script>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="logo">CEP</div>
+        <nav>
+            <ul>
+                <li th:each="item : ${menuItems}">
+                    <a th:href="${item == 'Monitor List' ? '/' : (item == 'Environment' ? '/environments' : (item == 'Advance Setting' ? '/advanced-settings' : '#'))}"
+                       th:text="${item}" th:classappend="${item == activeMenu} ? 'active' : ''"></a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="page-header">
+            <div class="header-title">Advance Settings</div>
+        </header>
+        <div class="messages">
+            <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
+        </div>
+        <form th:action="@{/advanced-settings}" th:object="${form}" method="post" class="form-card">
+            <div class="form-row">
+                <label for="headerTitle">Header title</label>
+                <input id="headerTitle" type="text" th:field="*{headerTitle}" placeholder="Core Environment Proxy (CEP)">
+                <span class="error" th:if="${#fields.hasErrors('headerTitle')}" th:errors="*{headerTitle}"></span>
+            </div>
+            <div class="form-row toggle-row">
+                <label for="demoModeToggle">Demo mode</label>
+                <div class="toggle-control">
+                    <label class="switch">
+                        <input id="demoModeToggle" type="checkbox" th:field="*{demoMode}">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-chip" data-toggle-target="demoModeToggle"
+                          th:text="*{demoMode} ? 'on' : 'off'"
+                          th:classappend="*{demoMode} ? ' on' : ' off'"></span>
+                </div>
+            </div>
+            <div class="form-row toggle-row">
+                <label for="passthroughToggle">Passthrough/Transparent Mode</label>
+                <div class="toggle-control">
+                    <label class="switch">
+                        <input id="passthroughToggle" type="checkbox" th:field="*{passthroughMode}">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-chip" data-toggle-target="passthroughToggle"
+                          th:text="*{passthroughMode} ? 'on' : 'off'"
+                          th:classappend="*{passthroughMode} ? ' on' : ' off'"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <label for="esbDomain">ESB domain</label>
+                <input id="esbDomain" type="text" th:field="*{esbDomain}" placeholder="ESB domain">
+            </div>
+            <div class="form-row">
+                <label for="connectionTimeout">Connection Timeout (second)</label>
+                <input id="connectionTimeout" type="text" th:field="*{connectionTimeout}" placeholder="5">
+                <span class="error" th:if="${#fields.hasErrors('connectionTimeout')}" th:errors="*{connectionTimeout}"></span>
+            </div>
+            <div class="form-row">
+                <label for="readTimeout">Read Timeout (second)</label>
+                <input id="readTimeout" type="text" th:field="*{readTimeout}" placeholder="10">
+                <span class="error" th:if="${#fields.hasErrors('readTimeout')}" th:errors="*{readTimeout}"></span>
+            </div>
+            <div class="form-row">
+                <label for="writeTimeout">Write Timeout (second)</label>
+                <input id="writeTimeout" type="text" th:field="*{writeTimeout}" placeholder="5">
+                <span class="error" th:if="${#fields.hasErrors('writeTimeout')}" th:errors="*{writeTimeout}"></span>
+            </div>
+            <div class="form-row">
+                <label for="lookupUrl">Lookup Profile URL</label>
+                <input id="lookupUrl" type="text" th:field="*{lookupUrl}" placeholder="Full URL">
+            </div>
+            <div class="form-row">
+                <label for="lookupHeader">Lookup Request Header</label>
+                <textarea id="lookupHeader" th:field="*{lookupHeader}" placeholder="JSON format"></textarea>
+            </div>
+            <div class="form-row">
+                <label for="lookupBody">Lookup Request Body</label>
+                <textarea id="lookupBody" th:field="*{lookupBody}" placeholder="JSON format"></textarea>
+            </div>
+            <div class="form-row">
+                <label for="lookupEnvKey">Lookup Env ID Key</label>
+                <input id="lookupEnvKey" type="text" th:field="*{lookupEnvKey}">
+            </div>
+            <div class="form-row">
+                <label for="lookupAccountKey">Lookup Account ID Key</label>
+                <input id="lookupAccountKey" type="text" th:field="*{lookupAccountKey}">
+            </div>
+            <div class="form-row">
+                <label for="lookupCifKey">Lookup CIF Number Key</label>
+                <input id="lookupCifKey" type="text" th:field="*{lookupCifKey}">
+            </div>
+            <div class="form-row">
+                <label for="lookupIdKey">Loopup ID Number Key</label>
+                <input id="lookupIdKey" type="text" th:field="*{lookupIdKey}">
+            </div>
+            <div class="form-row">
+                <label for="lookupNameKey">Lookup Name Key</label>
+                <input id="lookupNameKey" type="text" th:field="*{lookupNameKey}">
+            </div>
+            <div class="form-actions">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>

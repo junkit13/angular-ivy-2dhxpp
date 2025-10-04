@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Environment - Core Environment Proxy</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/environment.js}" defer></script>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="logo">CEP</div>
+        <nav>
+            <ul>
+                <li th:each="item : ${menuItems}">
+                    <a th:href="${item == 'Monitor List' ? '/' : (item == 'Environment' ? '/environments' : (item == 'Advance Setting' ? '/advanced-settings' : '#'))}"
+                       th:text="${item}" th:classappend="${item == activeMenu} ? 'active' : ''"></a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="page-header">
+            <div class="header-title">Environment</div>
+        </header>
+        <div class="messages">
+            <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
+            <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+        </div>
+        <form method="post" action="/environments" id="environmentForm" class="form-card">
+            <table class="monitor-table">
+                <thead>
+                <tr>
+                    <th>Environment ID</th>
+                    <th class="actions-column">
+                        <button type="button" id="addEnvironment">Add Row</button>
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="environmentTableBody">
+                <tr th:each="env, iter : ${environments}">
+                    <td><input type="text" name="envIds" th:value="${env.envId}" required></td>
+                    <td><button type="button" class="remove-row" th:if="${environments.size() > 1}">Remove</button></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="form-actions">
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </main>
+</div>
+</body>
+</html>
