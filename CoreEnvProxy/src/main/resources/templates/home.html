@@ -2,95 +2,154 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>CEP &mdash; User Groups</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f4f8;
-            color: #1f2933;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            background: #1d4ed8;
-            color: #ffffff;
-            padding: 1.5rem 2rem;
-        }
-        main {
-            flex: 1;
-            padding: 2rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-        }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-        }
-        th {
-            background: #e2e8f0;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 0.85rem;
-        }
-        tr:nth-child(even) td {
-            background: #f8fafc;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-        }
-        a.button {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.6rem 1.5rem;
-            border-radius: 999px;
-            background: #1d4ed8;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-        }
-    </style>
+    <title>Core Environment Proxy</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/home.js}" defer></script>
 </head>
 <body>
-<header>
-    <h1>Core Environment Proxy &mdash; User Groups</h1>
-</header>
-<main>
-    <section th:if="${userGroups.isEmpty()}">
-        <div class="empty-state">
-            <p>No user groups are currently defined.</p>
-            <a class="button" th:href="@{/}">Back to Welcome</a>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="logo">CEP</div>
+        <nav>
+            <ul>
+                <li th:each="item : ${menuItems}">
+                    <a th:href="${item == 'Monitor List' ? '/' : (item == 'Environment' ? '/environments' : (item == 'Advance Setting' ? '/advanced-settings' : '#'))}"
+                       th:text="${item}" th:classappend="${item == activeMenu} ? 'active' : ''"></a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="page-header">
+            <div class="header-title" th:text="${headerTitle}">Core Environment Proxy (CEP)</div>
+        </header>
+        <div class="messages">
+            <div class="alert success" th:if="${successMessage}" th:text="${successMessage}"></div>
+            <div class="alert error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
         </div>
-    </section>
-    <section th:if="${!userGroups.isEmpty()}">
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="group : ${userGroups}">
-                <td th:text="${group.id}">1</td>
-                <td th:text="${group.name}">Example</td>
-                <td th:text="${group.description}">Example Description</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-</main>
+        <div class="status-summary">
+            <div class="status-item">
+                <span class="status-label">Default environment</span>
+                <span class="status-value" th:text="${defaultEnvDisplay}">DEV</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Passthrough/Transparent Mode</span>
+                <span class="status-badge" th:classappend="${passthroughOn} ? ' on' : ' off'"
+                      th:text="${passthroughValue}">off</span>
+            </div>
+        </div>
+
+        <div class="monitor-disabled" th:if="${!monitoringEnabled}">
+            <p>Monitor list is hidden while Passthrough/Transparent Mode is on.</p>
+        </div>
+
+        <div th:if="${monitoringEnabled}">
+            <hr class="divider"/>
+            <section class="monitor-section">
+                <div class="section-header">
+                    <h2>Monitor List</h2>
+                    <div class="actions">
+                        <form method="get" action="/" class="search-form">
+                            <label for="searchInput">Search Account ID</label>
+                            <input id="searchInput" type="text" name="search" th:value="${search}" placeholder="Account ID">
+                            <button type="submit">Search</button>
+                        </form>
+                        <div class="action-buttons">
+                            <button type="button" id="openAddModal">Add</button>
+                            <form id="deleteForm" method="post" action="/monitor/delete">
+                                <input type="hidden" name="page" th:value="${currentPage}"/>
+                                <button type="submit" id="deleteButton" disabled>Delete</button>
+                                <table class="monitor-table">
+                                    <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAll"></th>
+                                        <th>Account ID</th>
+                                        <th>CIF Number</th>
+                                        <th>ID Number</th>
+                                        <th>Environment</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="monitor : ${monitorPage}">
+                                        <td>
+                                            <input type="checkbox" name="selectedAccounts" th:value="${monitor.accountId}" class="row-checkbox">
+                                        </td>
+                                        <td th:text="${monitor.accountId}"></td>
+                                        <td th:text="${monitor.cifNum}"></td>
+                                        <td th:text="${monitor.idNum}"></td>
+                                        <td>
+                                            <select th:value="${monitor.envId}"
+                                                    th:onchange="|submitEnvUpdate('${monitor.accountId}', this.value)|">
+                                                <option th:each="env : ${environments}" th:value="${env.envId}"
+                                                        th:text="${env.envId}"
+                                                        th:selected="${env.envId == monitor.envId}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${monitorPage.totalElements == 0}">
+                                        <td colspan="5" class="empty">No monitor records found.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagination" th:if="${totalPages > 1}">
+                    <a th:if="${currentPage > 0}" th:href="@{/(page=${currentPage-1}, search=${search})}">&laquo; Previous</a>
+                    <span>Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+                    <a th:if="${currentPage + 1 < totalPages}" th:href="@{/(page=${currentPage+1}, search=${search})}">Next &raquo;</a>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal" id="addModal" hidden th:if="${monitoringEnabled}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add record</h3>
+                    <button type="button" class="close" id="closeAddModal">&times;</button>
+                </div>
+                <form method="post" action="/monitor/add" enctype="multipart/form-data" id="addForm">
+                    <div class="form-group">
+                        <label for="modalEnv">Environment</label>
+                        <select id="modalEnv" name="envId" required>
+                            <option value="" disabled selected>Select environment</option>
+                            <option th:each="env : ${environments}" th:value="${env.envId}" th:text="${env.envId}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mode</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="mode" value="single" checked> Add single record</label>
+                            <label><input type="radio" name="mode" value="file"> Add multiple record via file</label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="singleAccountGroup">
+                        <label for="modalAccountId">Account ID</label>
+                        <input type="text" id="modalAccountId" name="accountId" placeholder="Account ID">
+                    </div>
+                    <div class="form-group" id="fileUploadGroup" hidden>
+                        <label>Upload file</label>
+                        <div class="file-upload" id="dropZone">
+                            <p>Drag and drop file here or click to browse</p>
+                            <input type="file" id="fileInput" name="uploadFile" accept=".csv,.txt">
+                        </div>
+                        <small>Supported file type: .csv, .txt only, Maximum Record 1000</small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" id="submitAdd" disabled>Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<form id="envUpdateForm" method="post" action="/monitor/update-environment" hidden th:if="${monitoringEnabled}">
+    <input type="hidden" name="accountId" id="envAccountId">
+    <input type="hidden" name="envId" id="envValue">
+</form>
+
 </body>
 </html>
